@@ -1,0 +1,15 @@
+<h1>Playlists Index</h1>
+
+<% if @status == 200 %>
+	<table class='table'>
+		<% @playlists['items'].each do |playlist| %>
+		<tbody>
+			<tr>
+				<td> <%= playlist['name'] %></td>
+			</tr>
+		</tbody>
+		<% end %>
+	</table>
+<% else %>
+	<h1>Error: <%= @status %></h1>
+<% end %>

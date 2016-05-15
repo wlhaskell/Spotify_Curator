@@ -18,11 +18,11 @@ class PlaylistsController < ApplicationController
                     'Content-Type' => 'application/json'},
       :debug_output => $stdout) 
 
-    if playlist.code == 200
-      Playlist.create(name: params[:name], spotify_id: playlist['id'], owner_id: params[:owner_id])
+    if playlist.code == 201
+      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id)
     end
 
-    redirect_to home_path(:id => user.id)
+    redirect_to home_path(:id => user.id, :code => playlist.code)
 
   end
 

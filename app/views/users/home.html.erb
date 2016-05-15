@@ -1,11 +1,15 @@
+	
+
 	<table class='table'>
-		<% @playlists['items'].each do |playlist| %>
-			<tbody>
-				<tr>
-					<td> <%= playlist['name'] %></td>
-				</tr>
-			</tbody>
+		<tbody>
+		<%if @playlists != nil %>
+			<% @playlists.each do |playlist| %>
+					<tr>
+						<td> <%= playlist.name %></td>
+					</tr>
+			<% end %>
 		<% end %>
+		</tbody>
 	</table>
 
 	<%= link_to 'New Playlist', new_playlist_path(:id => @user.id)  %>

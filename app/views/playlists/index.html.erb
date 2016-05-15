@@ -2,10 +2,10 @@
 
 <% if @status == 200 %>
 	<table class='table'>
-		<% @playlists['items'].each do |playlist| %>
+		<% @playlists.each do |playlist| %>
 		<tbody>
 			<tr>
-				<td> <%= playlist['name'] %></td>
+				<td> <%= playlist.name %></td>
 			</tr>
 		</tbody>
 		<% end %>

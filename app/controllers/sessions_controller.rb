@@ -1,19 +1,9 @@
-class UsersController < ApplicationController
-  def new
+class SessionsController < ApplicationController
+  include HTTParty
+  debug_output $stdout
 
-  end
-
-  def home
-    @user = User.find_by(id: params[:id])
-
-    if @user != nil
-      @playlists = HTTParty.get('https://api.spotify.com/v1/me/playlists',
-          :headers => { 'Authorization' => 'Bearer ' + @user.access_token } )
-    end
-  end
-
-  def login
-  	if params[:code] != nil
+	def create
+		if params[:code] != nil and params[:state] == session[:state]
 
   		tokens = HTTParty.post("https://accounts.spotify.com/api/token",
   			:body => { :code => params[:code],
@@ -27,7 +17,8 @@ class UsersController < ApplicationController
   		if tokens.code == 200
 	  		token = tokens['access_token']
   			profile = HTTParty.get('https://api.spotify.com/v1/me',
-  				:headers => {'Authorization' => 'Bearer ' + token})
+  				:headers => {'Authorization' => 'Bearer ' + token},
+          :debug_output => $stdout)
 				if profile.code == 200
           user = User.find_by(spotify_id: profile['id'])
 					if user != nil
@@ -41,7 +32,10 @@ class UsersController < ApplicationController
   		end
 
   		redirect_to home_path(:id => user.id)
-
   	end
-  end
+	end
+
+	def destroy
+	end
+
 end

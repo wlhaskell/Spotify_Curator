@@ -2,9 +2,11 @@ Rails.application.routes.draw do
 
   root 'welcome#welcome'
 
-  resources :playlists
+  delete 'playlists/tracks' => 'playlists#destroy_track'
 
-  delete 'playlists/tracks/delete' => 'playlists#destroy_track'
+  post 'playlists/tracks' => 'playlists#add_track'
+
+  resources :playlists
 
   get 'error' => 'welcome#error'
 

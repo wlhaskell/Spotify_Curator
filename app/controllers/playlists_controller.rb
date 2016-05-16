@@ -43,7 +43,7 @@ class PlaylistsController < ApplicationController
         @tracks.push track['track']
       end
     else
-      redirect_to 'error?error=' + tracks.code.to_s
+      redirect_to '/error?error=' + tracks.code.to_s
     end
 
     if params[:search] != nil
@@ -58,7 +58,7 @@ class PlaylistsController < ApplicationController
           @search.push track
         end
       else
-        redirect_to 'error?error=' + results.code.to_s
+        redirect_to '/error?error=' + results.code.to_s
       end
     end
 
@@ -66,6 +66,19 @@ class PlaylistsController < ApplicationController
 
   def destroy
     
+  end
+
+  def add_track
+
+    playlist = Playlist.find(params[:id])
+    user = User.find(playlist.user_id)
+    add = HTTParty.post('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + playlist.spotify_id + '/tracks',
+      :headers => { 'Authorization' => 'Bearer ' + user.access_token,
+                    'Content-Type' => 'appliaction/json'},
+      :body => {'uris' => [params[:uri]]}.to_json)
+
+      redirect_to playlist_path(playlist)
+
   end
 
   def destroy_track
@@ -77,7 +90,7 @@ class PlaylistsController < ApplicationController
                     'Content-Type' => 'appliaction/json'},
       :body => {'tracks' => ['uri' => params[:uri]]}.to_json)
 
-      redirect_to playlist_path(playlist, error: remove)
+      redirect_to playlist_path(playlist)
   end
 
 end

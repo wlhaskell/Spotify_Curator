@@ -2,3 +2,11 @@
 <p>Find me in app/views/welcome/welcome.html.erb</p>
 
 <%= link_to 'Login to Spotify', spotify_path %>
+
+<p>Or contribute to a playlist with an access code:</p>
+<form action = 'callback'>
+  <fieldset>
+    <input type="text" name="access_code">
+    <input type="submit" value="Submit">
+  </fieldset>
+</form>

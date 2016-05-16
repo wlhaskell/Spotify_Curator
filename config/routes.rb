@@ -12,8 +12,7 @@ Rails.application.routes.draw do
 
   get 'callback' => 'sessions#create'
 
-  get 'signout' => 'sessions#destroy'
-
+  get 'logout' => 'sessions#destroy'
 
   get 'users/new'
 

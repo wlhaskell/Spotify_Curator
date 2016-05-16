@@ -1,6 +1,6 @@
+require 'SecureRandom'
+
 class PlaylistsController < ApplicationController
-  include HTTParty
-  debug_output $stdout
 
   def index
 
@@ -15,11 +15,10 @@ class PlaylistsController < ApplicationController
     playlist = HTTParty.post('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists', 
       :body => { :name => params[:playlist][:name] }.to_json,
       :headers => { 'Authorization' => 'Bearer ' + user.access_token,
-                    'Content-Type' => 'application/json'},
-      :debug_output => $stdout) 
+                    'Content-Type' => 'application/json'}) 
 
     if playlist.code == 201
-      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id)
+      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id, access_code: SecureRandom.urlsafe_base64 )
     end
 
     redirect_to home_path(:id => user.id, :code => playlist.code)
@@ -35,6 +34,7 @@ class PlaylistsController < ApplicationController
     playlist = Playlist.find(params[:id])
     user = User.find(playlist.user_id)
     @id = playlist.id
+    @access_code = playlist.access_code
     tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + playlist.spotify_id + '/tracks?fields=items(track(name,uri))',
       :headers => {'Authorization' => 'Bearer ' + user.access_token})
 

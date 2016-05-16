@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
   resources :playlists
 
+  delete 'playlists/tracks/delete' => 'playlists#destroy_track'
+
+  get 'error' => 'welcome#error'
+
   get 'callback' => 'sessions#create'
 
   get 'signout' => 'sessions#destroy'

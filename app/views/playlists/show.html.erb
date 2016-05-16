@@ -1,0 +1,32 @@
+<form>
+  <fieldset>
+    <input type="text" name="search">
+    <input type="submit" value="Search">
+  </fieldset>
+</form>
+
+
+<table class='table'>	
+	<tbody>
+		<% @search.each do |track| %>
+				<tr>
+					<td> <%= track['name'] %></td>
+					<td> <%= track['artists'][0]['name'] %></td>
+				</tr>
+		<% end %>
+	</tbody>
+</table>
+
+
+<h1> Playlsit</h1>
+
+<table class='table'>	
+	<tbody>
+		<% @tracks.each do |track| %>
+				<tr>
+					<td> <%= track['name'] %></td>
+					<td> <%= link_to 'Remove', 'tracks/delete?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'delete' %></td>
+				</tr>
+		<% end %>
+	</tbody>
+</table>

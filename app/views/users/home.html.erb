@@ -6,6 +6,7 @@
 			<% @playlists.each do |playlist| %>
 					<tr>
 						<td> <%= playlist.name %></td>
+						<td> <%= link_to 'Edit', playlist_path(playlist) %>
 					</tr>
 			<% end %>
 		<% end %>

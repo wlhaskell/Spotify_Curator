@@ -2,6 +2,10 @@ require 'SecureRandom'
 
 class PlaylistsController < ApplicationController
 
+  before_action :get_playlist, except: [:new, :create]
+
+  before_action :authenticate_user
+
   def index
 
   end
@@ -11,7 +15,7 @@ class PlaylistsController < ApplicationController
   end
 
   def create
-    user = User.find(params[:playlist][:owner_id])  
+    user = User.find(session[:current_user])  
     playlist = HTTParty.post('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists', 
       :body => { :name => params[:playlist][:name] }.to_json,
       :headers => { 'Authorization' => 'Bearer ' + user.access_token,
@@ -31,11 +35,10 @@ class PlaylistsController < ApplicationController
   def show
     @tracks = []
     @search = []
-    playlist = Playlist.find(params[:id])
-    user = User.find(playlist.user_id)
-    @id = playlist.id
-    @access_code = playlist.access_code
-    tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + playlist.spotify_id + '/tracks?fields=items(track(name,uri))',
+    user = User.find(@playlist.user_id)
+    @id = @playlist.id
+    @access_code = @playlist.access_code
+    tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks?fields=items(track(name,uri))',
       :headers => {'Authorization' => 'Bearer ' + user.access_token})
 
     if tracks.code == 200
@@ -70,27 +73,38 @@ class PlaylistsController < ApplicationController
 
   def add_track
 
-    playlist = Playlist.find(params[:id])
-    user = User.find(playlist.user_id)
-    add = HTTParty.post('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + playlist.spotify_id + '/tracks',
+    user = User.find(@playlist.user_id)
+    add = HTTParty.post('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks',
       :headers => { 'Authorization' => 'Bearer ' + user.access_token,
                     'Content-Type' => 'appliaction/json'},
       :body => {'uris' => [params[:uri]]}.to_json)
 
-      redirect_to playlist_path(playlist)
+      redirect_to playlist_path(@playlist)
 
   end
 
   def destroy_track
-    playlist = Playlist.find(params[:id])
-
-    user = User.find(playlist.user_id)
-    remove = HTTParty.delete('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + playlist.spotify_id + '/tracks',
+    
+    user = User.find(@playlist.user_id)
+    remove = HTTParty.delete('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks',
       :headers => { 'Authorization' => 'Bearer ' + user.access_token,
                     'Content-Type' => 'appliaction/json'},
       :body => {'tracks' => ['uri' => params[:uri]]}.to_json)
 
-      redirect_to playlist_path(playlist)
+      redirect_to playlist_path(@playlist)
   end
+
+  private
+
+  def get_playlist
+    @playlist = Playlist.find(params[:id])
+  end
+
+  def authenticate_user
+    if !(@playlist.user_id == session[:current_user] or session[:current_user] == @playlist.access_code)
+      redirect_to root_path
+    end
+  end
+
 
 end

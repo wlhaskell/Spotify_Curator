@@ -40,7 +40,7 @@ class SessionsController < ApplicationController
     else
       playlist = Playlist.find_by(access_code: params[:access_code])
       if playlist != nil
-        session[:current_user] = 'guest'
+        session[:current_user] = params[:access_code]
         redirect_to playlist_path(playlist)
       else
         redirect_to root_path
@@ -51,9 +51,9 @@ class SessionsController < ApplicationController
 	def destroy
     user = User.find(session[:current_user])
     session[:current_user] = nil
-    #user.access_token = nil
-    #user.refresh_token = nil
-    #user.save
+    user.access_token = nil
+    user.refresh_token = nil
+    user.save
     redirect_to root_path
 	end
 

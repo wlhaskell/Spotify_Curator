@@ -44,7 +44,7 @@ class PlaylistsController < ApplicationController
     @access_code = @playlist.access_code
     tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks?fields=items(track(name,uri))',
       :headers => {'Authorization' => 'Bearer ' + user.access_token})
-
+    
     if tracks.code == 200
       tracks['items'].each do |track|
         @tracks.push track['track']
@@ -52,6 +52,7 @@ class PlaylistsController < ApplicationController
     else
       redirect_to '/error?error=' + tracks.code.to_s
     end
+   
 
     if params[:search] != nil
       results = HTTParty.get('https://api.spotify.com/v1/search?' +
@@ -144,6 +145,29 @@ class PlaylistsController < ApplicationController
       redirect_to root_path
     end
   end     
+
+ def check_response(code,id)
+  #if code == 401
+  #  user = User.find(id)
+    
+  #  refresh = HTTParty.post('https://accounts.spotify.com/api/token',
+  #    :body => {
+  #              :client_id => ENV['client_id'],
+  #              :client_secret => ENV['client_secret'],
+  #              :grant_type => 'refresh_token',
+  #              :refresh_token => user.refresh_token})
+
+  #  user.access_token = refresh['access_token']
+  #  user.refresh_token = refresh['refresh_token']
+  #  user.save
+  if code != 200 and code != 201
+    redirect_to error_path(error: code)
+    return false
+  end
+
+  return true
+
+end
 
 
 end

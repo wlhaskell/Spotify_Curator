@@ -1,39 +1,45 @@
 <p>Access Code: <%= @access_code %></p>
 
-<%= link_to 'Apply Filters', 'apply_filters?&id=' + @id.to_s, :method => 'post' %>
+<% if session[:current_user] == @playlist.user_id %>
+	<%= link_to 'Apply Filters', 'apply_filters?&id=' + @id.to_s, :method => 'post' %>
+<% end %>
 
-<form>
-  <fieldset>
-    <input type="text" name="search">
-    <input type="submit" value="Search">
-  </fieldset>
-</form>
+<div class='row'>
+	<div class ='col-md-6'>
+		<h1> Playlsit</h1>
 
+		<table class='table'>	
+			<tbody>
+				<% @tracks.each do |track| %>
+						<tr>
+							<td> <%= track['name'] %></td>
+							<td> <%= link_to 'Remove', 'tracks?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'delete' %></td>
+						</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
 
-<table class='table'>	
-	<tbody>
-		<% @search.each do |track| %>
-				<tr>
-					<td> <%= track['track']['name'] %></td>
-					<td> <%= track['track']['artists'][0]['name'] %></td>
-					<% if @playlist.danceability*1.10 > track['audio_features']['danceability'] and track['audio_features']['danceability'] > @playlist.danceability*0.9 %>
-						<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['track']['uri'], :method => 'post' %></td>
-					<% end %>
-				</tr>
-		<% end %>
-	</tbody>
-</table>
-
-
-<h1> Playlsit</h1>
-
-<table class='table'>	
-	<tbody>
-		<% @tracks.each do |track| %>
-				<tr>
-					<td> <%= track['name'] %></td>
-					<td> <%= link_to 'Remove', 'tracks?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'delete' %></td>
-				</tr>
-		<% end %>
-	</tbody>
-</table>
+	<div class ='col-md-6'>
+		<h1>Search</h1>
+		<form>
+		  <fieldset class='form-inline'>
+		    <input type="text" name="search" class='form-control'>
+		    <input type="submit" value="Search" class='btn btn-default'>
+		  </fieldset>
+		</form>
+		<table class='table'>	
+			<tbody>
+				<% @search.each do |track| %>
+						<tr>
+							<td> <%= track['track']['name'] %></td>
+							<td> <%= track['track']['artists'][0]['name'] %></td>
+							<% if filter(@playlist,track,0.2) %>
+								<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['track']['uri'], :method => 'post' %></td>
+							<% end %>
+						</tr>
+				<% end %>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,12 +1,18 @@
-<h1>Welcome#welcome</h1>
-<p>Find me in app/views/welcome/welcome.html.erb</p>
-
-<%= link_to 'Login to Spotify', spotify_path %>
-
-<p>Or contribute to a playlist with an access code:</p>
-<form action = 'callback'>
-  <fieldset>
-    <input type="text" name="access_code">
-    <input type="submit" value="Submit">
-  </fieldset>
-</form>
+<div class="page-header">
+		<h1>Spotify Curator</h1>
+		<p>Collaborate on Spotify Playlists with anyone.</p>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<h3>Login using a Spotify account</h3>
+		<%= link_to 'Login to Spotify', spotify_path, class:'btn btn-default' %>
+	</div>
+	<div class ='col-md-6'>
+		<h3>Or contribute with an access code</h3>
+		<form action = 'callback'>
+		  <fieldset class='form-inline'>
+		    <input type="text" name="access_code" class='form-control'>
+		    <input type="submit" value="Submit" class='btn btn-default'>
+		  </fieldset>
+		</form>
+	</div>

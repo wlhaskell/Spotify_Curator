@@ -1,7 +1,16 @@
-<%= link_to 'Logout', logout_path %>	
+<div class="page-header">
+		<h1><%= @user.spotify_id %></h1>
+		<p>Choose a playlist to edit, or create a new one</p>
+</div>
 
 	<table class='table'>
+		<thead>
+			<td>Playlist</td>
 		<tbody>
+			<tr>
+				<td><%= link_to 'Create a new playlist', new_playlist_path(:id => @user.id)  %></td>
+				<td></td>
+			</tr>
 		<%if @playlists != nil %>
 			<% @playlists.each do |playlist| %>
 					<tr>
@@ -13,4 +22,7 @@
 		</tbody>
 	</table>
 
-	<%= link_to 'New Playlist', new_playlist_path(:id => @user.id)  %>
+	<%= link_to 'Logout', logout_path %>	
+
+
+

@@ -11,16 +11,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160515214626) do
+ActiveRecord::Schema.define(version: 20160518122007) do
+
+  create_table "audio_features", force: :cascade do |t|
+    t.string   "feature"
+    t.float    "low"
+    t.float    "high"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "playlist_id"
+  end
 
   create_table "playlists", force: :cascade do |t|
     t.string   "spotify_id"
     t.string   "access_code"
     t.string   "owner_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.string   "name"
     t.integer  "user_id"
+    t.float    "danceability_low"
+    t.float    "danceability_high"
+    t.float    "danceability"
+    t.float    "energy"
+    t.integer  "key"
+    t.float    "loudness"
+    t.integer  "mode"
+    t.float    "speechiness"
+    t.float    "acousticness"
+    t.float    "instrumentalness"
+    t.float    "liveness"
+    t.float    "valence"
+    t.float    "tempo"
   end
 
   create_table "users", force: :cascade do |t|

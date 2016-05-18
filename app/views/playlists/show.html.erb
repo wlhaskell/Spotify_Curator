@@ -1,5 +1,7 @@
 <p>Access Code: <%= @access_code %></p>
 
+<%= link_to 'Apply Filters', 'apply_filters?&id=' + @id.to_s, :method => 'post' %>
+
 <form>
   <fieldset>
     <input type="text" name="search">
@@ -12,9 +14,11 @@
 	<tbody>
 		<% @search.each do |track| %>
 				<tr>
-					<td> <%= track['name'] %></td>
-					<td> <%= track['artists'][0]['name'] %></td>
-					<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'post' %></td>
+					<td> <%= track['track']['name'] %></td>
+					<td> <%= track['track']['artists'][0]['name'] %></td>
+					<% if @playlist.danceability*1.10 > track['audio_features']['danceability'] and track['audio_features']['danceability'] > @playlist.danceability*0.9 %>
+						<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['track']['uri'], :method => 'post' %></td>
+					<% end %>
 				</tr>
 		<% end %>
 	</tbody>

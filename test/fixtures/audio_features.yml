@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  feature: MyString
+  low: 1.5
+  high: 1.5
+
+two:
+  feature: MyString
+  low: 1.5
+  high: 1.5

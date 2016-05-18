@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
 
+
   root 'welcome#welcome'
 
   delete 'playlists/tracks' => 'playlists#destroy_track'
 
   post 'playlists/tracks' => 'playlists#add_track'
+
+  post 'playlists/apply_filters' => 'playlists#apply_filters'
 
   resources :playlists
 
@@ -24,7 +27,6 @@ Rails.application.routes.draw do
 
   get 'index' => 'playlists#index'
 
-  get 'token' => 'playlists#token'
 
 
 

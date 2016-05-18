@@ -4,7 +4,7 @@ class PlaylistsController < ApplicationController
 
   before_action :get_playlist, except: [:new, :create]
 
-  before_action :authenticate_user
+  before_action :authenticate_user, except: [:new, :create]
 
   def index
 
@@ -12,6 +12,10 @@ class PlaylistsController < ApplicationController
 
   def new
     @playlist = Playlist.new
+
+    user = User.find(session[:current_user])
+    playlists = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists',
+                 :headers => { 'Authorization' => 'Bearer ' + user.access_token})
   end
 
   def create
@@ -22,7 +26,7 @@ class PlaylistsController < ApplicationController
                     'Content-Type' => 'application/json'}) 
 
     if playlist.code == 201
-      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id, access_code: SecureRandom.urlsafe_base64 )
+      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id, access_code: SecureRandom.urlsafe_base64, danceability_low: params[:playlist][:danceability_low], danceability_high: params[:playlist][:danceability_high] )
     end
 
     redirect_to home_path(:id => user.id, :code => playlist.code)
@@ -58,7 +62,9 @@ class PlaylistsController < ApplicationController
 
       if results.code == 200
         results['tracks']['items'].each do |track|
-          @search.push track
+          audio_features = HTTParty.get('https://api.spotify.com/v1/audio-features/' + track['id'],
+            :headers => {'Authorization' => 'Bearer ' + user.access_token})
+          @search.push({'track' => track,'audio_features' => audio_features})
         end
       else
         redirect_to '/error?error=' + results.code.to_s
@@ -94,6 +100,39 @@ class PlaylistsController < ApplicationController
       redirect_to playlist_path(@playlist)
   end
 
+  def apply_filters
+
+    user = User.find(@playlist.user_id)
+
+    tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks',
+      :headers => {'Authorization' => 'Bearer ' + user.access_token})
+    count = 0
+    danceability_sum = 0
+    energy_sum = 0
+    acousticness_sum = 0
+
+    if tracks.code == 200
+      tracks['items'].each do |track|
+        audio_features = HTTParty.get('https://api.spotify.com/v1/audio-features/' + track['track']['id'],
+          :headers => {'Authorization' => 'Bearer ' + user.access_token})
+        count += 1
+        danceability_sum += audio_features['danceability'].to_f
+        energy_sum += audio_features['energy'].to_f
+        acousticness_sum += audio_features['acousticness'].to_f
+      end
+
+      @playlist.danceability = danceability_sum / count
+      @playlist.energy = energy_sum / count
+      @playlist.acousticness = acousticness_sum / count
+      @playlist.save
+
+      redirect_to playlist_path(@playlist)
+    else
+      redirect_to playlist_path(@playlist)
+    end
+
+  end
+
   private
 
   def get_playlist
@@ -104,7 +143,7 @@ class PlaylistsController < ApplicationController
     if !(@playlist.user_id == session[:current_user] or session[:current_user] == @playlist.access_code)
       redirect_to root_path
     end
-  end
+  end     
 
 
 end

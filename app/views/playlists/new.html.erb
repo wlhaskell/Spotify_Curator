@@ -1,3 +1,5 @@
+<h1>Create a new playlist!</h1>
+
 <%= form_for(@playlist) do |f| %>
   <% if @playlist.errors.any? %>
     <div id="error_explanation">
@@ -14,6 +16,14 @@
   <div class="field">
     <%= f.label :name %><br>
     <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :danceability_low %><br>
+    <%= f.text_field :danceability_low %>
+  </div>
+  <div class="field">
+    <%= f.label :danceability_high %><br>
+    <%= f.text_field :danceability_high %>
   </div>
 
   <div class="actions">

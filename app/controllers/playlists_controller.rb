@@ -26,7 +26,7 @@ class PlaylistsController < ApplicationController
                     'Content-Type' => 'application/json'}) 
 
     if playlist.code == 201
-      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id, access_code: SecureRandom.urlsafe_base64, danceability_low: params[:playlist][:danceability_low], danceability_high: params[:playlist][:danceability_high] )
+      Playlist.create(name: params[:playlist][:name], spotify_id: playlist['id'], user_id: user.id, access_code: SecureRandom.urlsafe_base64)
     end
 
     redirect_to home_path(:id => user.id, :code => playlist.code)
@@ -42,7 +42,7 @@ class PlaylistsController < ApplicationController
     user = User.find(@playlist.user_id)
     @id = @playlist.id
     @access_code = @playlist.access_code
-    tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks?fields=items(track(name,uri))',
+    tracks = HTTParty.get('https://api.spotify.com/v1/users/' + user.spotify_id + '/playlists/' + @playlist.spotify_id + '/tracks?fields=items(track(name,artists(name),uri))',
       :headers => {'Authorization' => 'Bearer ' + user.access_token})
     
     if tracks.code == 200
@@ -132,6 +132,14 @@ class PlaylistsController < ApplicationController
       redirect_to playlist_path(@playlist)
     end
 
+  end
+
+  def reset_filters
+      @playlist.danceability = nil
+      @playlist.energy = nil
+      @playlist.acousticness = nil
+      @playlist.save
+      redirect_to playlist_path(@playlist)
   end
 
   private

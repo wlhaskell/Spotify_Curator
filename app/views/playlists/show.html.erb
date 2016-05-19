@@ -1,45 +1,64 @@
-<p>Access Code: <%= @access_code %></p>
+<div class="page-header">
+		<h1><%= @playlist.name %></h1>
+		<p>Access Code: <%= @access_code %></p>
+</div>
 
-<% if session[:current_user] == @playlist.user_id %>
-	<%= link_to 'Apply Filters', 'apply_filters?&id=' + @id.to_s, :method => 'post' %>
-<% end %>
 
 <div class='row'>
 	<div class ='col-md-6'>
-		<h1> Playlsit</h1>
-
-		<table class='table'>	
-			<tbody>
-				<% @tracks.each do |track| %>
-						<tr>
-							<td> <%= track['name'] %></td>
-							<td> <%= link_to 'Remove', 'tracks?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'delete' %></td>
-						</tr>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class='inline'> Tracks</h3>
+			</div>
+			<table class='table'>	
+				<tbody>
+					<% @tracks.each do |track| %>
+							<tr>
+								<td> <%= track['name'] %></td>
+								<td><%= track['artists'][0]['name'] %></td>
+								<td> <%= link_to 'Remove', 'tracks?id=' + @id.to_s + '&uri=' + track['uri'], :method => 'delete' %></td>
+							</tr>
+					<% end %>
+				</tbody>
+			</table>
+			<div class='panel-footer'>
+				<% if session[:current_user] == @playlist.user_id %>
+					<%if @playlist.danceability == nil %>
+						<%= link_to 'Apply Filters', 'apply_filters?&id=' + @id.to_s, :method => 'post', class: 'btn btn-default' %>
+					<% else %>
+						<%= link_to 'Reset Filters', 'reset_filters?&id=' + @id.to_s, :method => 'post', class: 'btn btn-primary' %>
+					<% end %>
 				<% end %>
-			</tbody>
-		</table>
+			</div>
+		</div>
 	</div>
 
+
 	<div class ='col-md-6'>
-		<h1>Search</h1>
-		<form>
-		  <fieldset class='form-inline'>
-		    <input type="text" name="search" class='form-control'>
-		    <input type="submit" value="Search" class='btn btn-default'>
-		  </fieldset>
-		</form>
-		<table class='table'>	
-			<tbody>
-				<% @search.each do |track| %>
-						<tr>
-							<td> <%= track['track']['name'] %></td>
-							<td> <%= track['track']['artists'][0]['name'] %></td>
-							<% if filter(@playlist,track,0.2) %>
-								<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['track']['uri'], :method => 'post' %></td>
-							<% end %>
-						</tr>
-				<% end %>
-			</tbody>
-		</table>
+		<div class='panel panel-default'>
+			<div class='panel panel-heading'>
+				<form>
+				  <fieldset class='form-inline'>
+				    <input type="text" name="search" class='form-control'>
+				    <input type="submit" value="Search" class='btn btn-default'>
+				  </fieldset>
+				</form>
+			</div>
+				<table class='table'>	
+					<tbody>
+						<% @search.each do |track| %>
+								<tr>
+									<td> <%= track['track']['name'] %></td>
+									<td> <%= track['track']['artists'][0]['name'] %></td>
+									<% if filter(@playlist,track,0.2) %>
+										<td><%= link_to 'Add Track', 'tracks?id=' + @id.to_s + '&uri=' + track['track']['uri'], :method => 'post' %></td>
+									<% else %>
+										<td>Filtered</td>
+									<% end %>
+								</tr>
+						<% end %>
+					</tbody>
+				</table>
+		</div>
 	</div>
 </div>

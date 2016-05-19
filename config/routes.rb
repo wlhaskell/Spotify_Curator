@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   post 'playlists/apply_filters' => 'playlists#apply_filters'
 
+  post 'playlists/reset_filters' => 'playlists#reset_filters'
+
   resources :playlists
 
   get 'error' => 'welcome#error'

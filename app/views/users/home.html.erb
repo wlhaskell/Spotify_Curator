@@ -3,9 +3,11 @@
 		<p>Choose a playlist to edit, or create a new one</p>
 </div>
 
+<div class = "panel panel-default">
+	<div class = "panel-heading">
+		<h4>Playlists</h4>
+	</div>
 	<table class='table'>
-		<thead>
-			<td>Playlist</td>
 		<tbody>
 			<tr>
 				<td><%= link_to 'Create a new playlist', new_playlist_path(:id => @user.id)  %></td>
@@ -21,8 +23,7 @@
 		<% end %>
 		</tbody>
 	</table>
-
-	<%= link_to 'Logout', logout_path %>	
+</div>
 
 
 

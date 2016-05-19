@@ -29,6 +29,7 @@ class SessionsController < ApplicationController
 						user = User.create(spotify_id: profile['id'], access_token: token, refresh_token: tokens['refresh_token'])
 					end
           session[:current_user] = user.id
+          session[:home] = true
         else
           redirect_to 'error?=' + tokens.code.to_s
 				end
@@ -51,6 +52,7 @@ class SessionsController < ApplicationController
 	def destroy
     user = User.find(session[:current_user])
     session[:current_user] = nil
+    session[:home] = nil
     user.access_token = nil
     user.refresh_token = nil
     user.save

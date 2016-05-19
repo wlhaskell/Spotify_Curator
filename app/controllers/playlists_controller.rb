@@ -1,5 +1,3 @@
-require 'SecureRandom'
-
 class PlaylistsController < ApplicationController
 
   before_action :get_playlist, except: [:new, :create]
